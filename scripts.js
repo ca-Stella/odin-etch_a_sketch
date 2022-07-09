@@ -1,12 +1,24 @@
 const grid = document.getElementById('grid');
+const clear = document.querySelector('#clear');
 
+clear.addEventListener('click', makeGrid);
 let gridSize = 16;
+let round = 0;
 
 makeGrid();
-draw();
 
-// makeGrid() to create 16x16 grid of square divs
+// makeGrid() to create a grid of square divs 
 function makeGrid() {
+    if (round !== 0) {
+        let sizeNum = checkSize();
+        if (sizeNum === null) {
+            return;
+        } else {
+            clearAll();
+            gridSize = sizeNum;
+        }
+    }
+
     for (let i = 0; i < gridSize; i++) {
         let square_row = document.createElement('div');
         square_row.classList.add('square_row');
@@ -18,6 +30,33 @@ function makeGrid() {
             square_row.appendChild(square);
         }
     }
+    round++;
+    draw();
+}
+
+// checkSize() to see if inputted size is appropriate
+function checkSize() {
+    let inputVal = window.prompt('grid size: ');
+    let inputNum = Number(inputVal)
+    while (!(0 < inputNum && inputNum <= 100)) {
+        if (inputVal === null) {
+            return inputVal;
+        } else if (inputVal === '') {
+            inputNum = 16;
+        } else if (inputNum > 100) {
+            alert("That's too big! Enter a smaller number!");
+            inputNum = checkSize();
+        } else {
+            alert('Please enter a valid value between 1-100');
+            inputNum = checkSize();
+        }
+    }
+    return inputNum;
+}
+
+// clearAll() to erase current grid
+function clearAll() {
+    grid.innerHTML = '';
 }
 
 // draw() in each square when hovering
