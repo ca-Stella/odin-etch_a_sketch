@@ -1,9 +1,13 @@
 const grid = document.getElementById('grid');
 const clear = document.querySelector('#clear');
+const eraser = document.querySelector('#eraser');
 
 clear.addEventListener('click', makeGrid);
+eraser.addEventListener('click', erase);
+
 let gridSize = 16;
 let round = 0;
+let cMode = 'basic';
 
 makeGrid();
 
@@ -65,9 +69,19 @@ function draw() {
     squares.forEach(square => square.addEventListener('mouseenter', fillColor));
 }
 
+// erase() square when hovering
+function erase() {
+    cMode = 'eraser';
+    draw();
+}
+
 // fillColor() in the square by changing the background colour
 function fillColor() {
-    color = 'black';
+    if (cMode == 'eraser') {
+        color = 'transparent';
+    } else {
+        color = 'black';
+    }
     this.style.opacity = 1;
     this.style.backgroundColor = color;
 }
