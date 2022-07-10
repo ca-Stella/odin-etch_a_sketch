@@ -8,6 +8,7 @@ eraser.addEventListener('click', erase);
 let gridSize = 16;
 let round = 0;
 let cMode = 'basic';
+let start = false; 
 
 makeGrid();
 
@@ -65,23 +66,42 @@ function clearAll() {
 
 // draw() in each square when hovering
 function draw() {
+    start = false;
     const squares = document.querySelectorAll('.square');
+    squares.forEach(square => square.addEventListener('click', startOrEnd));
     squares.forEach(square => square.addEventListener('mouseenter', fillColor));
 }
 
-// erase() square when hovering
-function erase() {
-    cMode = 'eraser';
-    draw();
+// startOrEnd() painting or erasing
+function startOrEnd() {
+    if (!start) {
+        start = true;
+        color = chooseColor();
+        this.style.backgroundColor = color;
+    } else {
+        start = false;
+    }
+}
+
+// chooseColor() to choose color to use
+function chooseColor() {
+    if (cMode == 'eraser') {
+        return 'transparent';
+    } else {
+        return 'black';
+    }
 }
 
 // fillColor() in the square by changing the background colour
 function fillColor() {
-    if (cMode == 'eraser') {
-        color = 'transparent';
-    } else {
-        color = 'black';
+    if (start) {
+        this.style.opacity = 1;
+        this.style.backgroundColor = color;
     }
-    this.style.opacity = 1;
-    this.style.backgroundColor = color;
+}
+
+// erase() to turn painted square into transparent square
+function erase() {
+    cMode = 'eraser';
+    draw();
 }
