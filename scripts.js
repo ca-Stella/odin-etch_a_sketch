@@ -2,10 +2,12 @@ const grid = document.getElementById('grid');
 const clear = document.querySelector('#clear');
 const eraser = document.querySelector('#eraser');
 const colPick = document.querySelector('#color-picker');
+const random = document.querySelector('#random');
 
 clear.addEventListener('click', makeGrid);
 eraser.addEventListener('click', erase);
 colPick.addEventListener('change', chooseColor);
+random.addEventListener('click', randomize);
 
 let gridSize = 16;
 let round = 0;
@@ -79,7 +81,7 @@ function startOrEnd() {
     if (!start) {
         start = true;
         color = chooseColor();
-        this.style.backgroundColor = color;
+        this.style.backgroundColor = chooseColor();
     } else {
         start = false;
     }
@@ -89,6 +91,8 @@ function startOrEnd() {
 function chooseColor() {
     if (cMode == 'eraser') {
         color = 'transparent';
+    } else if (cMode == 'random') {
+        color = randomizeColor();
     } else {
         color = colPick.value || 'black';
     }
@@ -99,7 +103,7 @@ function chooseColor() {
 function fillColor() {
     if (start) {
         this.style.opacity = 1;
-        this.style.backgroundColor = color;
+        this.style.backgroundColor = chooseColor();
     }
 }
 
@@ -107,4 +111,20 @@ function fillColor() {
 function erase() {
     cMode = 'eraser';
     draw();
+}
+
+// randomize() to paint a rainbow of random colours
+function randomize() {
+    cMode = 'random';
+    draw();
+}
+
+// randomizeColor() for the rainbow option
+function randomizeColor() {
+    const r = Math.floor(Math.random() * 255);
+    const g = Math.floor(Math.random() * 255);
+    const b = Math.floor(Math.random() * 255);
+    const a = (Math.floor(Math.random() * 10) + 1)/10;
+    const rgba = `rgb(${r},${g},${b},${a})`
+    return rgba;
 }
