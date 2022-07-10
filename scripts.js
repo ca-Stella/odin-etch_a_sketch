@@ -1,9 +1,11 @@
 const grid = document.getElementById('grid');
 const clear = document.querySelector('#clear');
 const eraser = document.querySelector('#eraser');
+const colPick = document.querySelector('#color-picker');
 
 clear.addEventListener('click', makeGrid);
 eraser.addEventListener('click', erase);
+colPick.addEventListener('change', chooseColor);
 
 let gridSize = 16;
 let round = 0;
@@ -86,10 +88,11 @@ function startOrEnd() {
 // chooseColor() to choose color to use
 function chooseColor() {
     if (cMode == 'eraser') {
-        return 'transparent';
+        color = 'transparent';
     } else {
-        return 'black';
+        color = colPick.value || 'black';
     }
+    return color;
 }
 
 // fillColor() in the square by changing the background colour
