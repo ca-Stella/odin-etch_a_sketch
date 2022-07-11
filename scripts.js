@@ -3,11 +3,13 @@ const clear = document.querySelector('#clear');
 const eraser = document.querySelector('#eraser');
 const colPick = document.querySelector('#color-picker');
 const random = document.querySelector('#random');
+const shade = document.querySelector('#shade');
 
 clear.addEventListener('click', makeGrid);
 eraser.addEventListener('click', erase);
-colPick.addEventListener('change', chooseColor);
+colPick.addEventListener('change', colorChange);
 random.addEventListener('click', randomize);
+shade.addEventListener('click', shadeColor);
 
 let gridSize = 16;
 let round = 0;
@@ -80,8 +82,13 @@ function draw() {
 function startOrEnd() {
     if (!start) {
         start = true;
+        if (cMode === 'shade') {
+            this.style.opacity = (this.style.opacity >= Number(this.style.opacity)) ? Number(this.style.opacity) + 0.1 : 0.1;
+        } else {
+            this.style.opacity = 1;
+        }
         color = chooseColor();
-        this.style.backgroundColor = chooseColor();
+        this.style.backgroundColor = color;
     } else {
         start = false;
     }
@@ -102,8 +109,14 @@ function chooseColor() {
 // fillColor() in the square by changing the background colour
 function fillColor() {
     if (start) {
-        this.style.opacity = 1;
-        this.style.backgroundColor = chooseColor();
+        if (cMode == 'shade') {
+            this.style.backgroundColor = color;
+            this.style.opacity = (this.dataset.shading == 0) ? 0.1 : Number(this.style.opacity) + 0.1;
+            this.dataset.shading += 1;
+        } else {
+            this.style.opacity = 1;
+            this.style.backgroundColor = chooseColor();
+        }
     }
 }
 
@@ -117,6 +130,21 @@ function erase() {
 function randomize() {
     cMode = 'random';
     draw();
+}
+
+// shadeColor() to increasingly shade in squares until chosen colour
+function shadeColor() {
+    cMode = 'shade';
+    const squares = document.querySelectorAll('.square');
+    squares.forEach(e => {e.dataset.shading = 0});
+    draw();
+}
+
+// colorChange() to reset each square's shading
+function colorChange() {
+    const squares = document.querySelectorAll('.square');
+    squares.forEach(e => {e.dataset.shading = 0});
+    chooseColor();
 }
 
 // randomizeColor() for the rainbow option
