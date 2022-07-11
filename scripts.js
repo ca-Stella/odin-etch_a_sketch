@@ -1,20 +1,23 @@
+const buttons = document.querySelectorAll('button');
 const grid = document.getElementById('grid');
 const clear = document.querySelector('#clear');
-const eraser = document.querySelector('#eraser');
 const colPick = document.querySelector('#color-picker');
-const random = document.querySelector('#random');
-const shade = document.querySelector('#shade');
+
+buttons.forEach(button => button.addEventListener('click', pressButton));
 
 clear.addEventListener('click', makeGrid);
-eraser.addEventListener('click', erase);
-colPick.addEventListener('change', colorChange);
-random.addEventListener('click', randomize);
-shade.addEventListener('click', shadeColor);
+// shade.addEventListener('click', shadeSquares);
+colPick.addEventListener('click', function() {
+    start = false; 
+    cMode = 'basic';
+});
+colPick.addEventListener('change', chooseColor);
 
 let gridSize = 16;
 let round = 0;
 let cMode = 'basic';
 let start = false; 
+let color = 'black';
 
 makeGrid();
 
@@ -38,6 +41,8 @@ function makeGrid() {
         for (let j = 0; j < gridSize; j++) {
             let square = document.createElement('div');
             square.classList.add('square');
+            square.style.backgroundColor = 'rgba(255, 255, 255, 0)';
+            square.dataset.step = 0;
             square_row.appendChild(square);
         }
     }
@@ -65,6 +70,13 @@ function checkSize() {
     return inputNum;
 }
 
+// pressButton() to set mode
+function pressButton() {
+    start = false;
+    cMode = this.getAttribute('id');
+    draw();
+}
+
 // clearAll() to erase current grid
 function clearAll() {
     grid.innerHTML = '';
@@ -82,13 +94,16 @@ function draw() {
 function startOrEnd() {
     if (!start) {
         start = true;
-        if (cMode === 'shade') {
-            this.style.opacity = (this.style.opacity >= Number(this.style.opacity)) ? Number(this.style.opacity) + 0.1 : 0.1;
+        if (cMode == 'shade') {
+            colorCode = this.style.backgroundColor;
+            shadeStep = parseInt(this.dataset.step);
+            color = findShade(colorCode, shadeStep);
+            this.style.backgroundColor = color;
+            this.dataset.step = shadeStep + 1;
         } else {
-            this.style.opacity = 1;
+            color = chooseColor();
+            this.style.backgroundColor = color;
         }
-        color = chooseColor();
-        this.style.backgroundColor = color;
     } else {
         start = false;
     }
@@ -101,6 +116,7 @@ function chooseColor() {
     } else if (cMode == 'random') {
         color = randomizeColor();
     } else {
+        cMode = 'basic';
         color = colPick.value || 'black';
     }
     return color;
@@ -110,41 +126,57 @@ function chooseColor() {
 function fillColor() {
     if (start) {
         if (cMode == 'shade') {
+            colorCode = this.style.backgroundColor;
+            shadeStep = parseInt(this.dataset.step);
+            color = findShade(colorCode, shadeStep);
             this.style.backgroundColor = color;
-            this.style.opacity = (this.dataset.shading == 0) ? 0.1 : Number(this.style.opacity) + 0.1;
-            this.dataset.shading += 1;
+            this.dataset.step = shadeStep + 1;
         } else {
-            this.style.opacity = 1;
-            this.style.backgroundColor = chooseColor();
+            color = chooseColor();
+            this.style.backgroundColor = color;
         }
     }
 }
 
-// erase() to turn painted square into transparent square
-function erase() {
-    cMode = 'eraser';
-    draw();
-}
 
-// randomize() to paint a rainbow of random colours
-function randomize() {
-    cMode = 'random';
-    draw();
-}
+// findShade() to find current colour and return darker colour
+function findShade(colorCode, shadeStep) {
+    color = colorCode.substring(colorCode.indexOf('(')+1, colorCode.indexOf(')'));
+    rgba = color.split(',');
+    rgba[3] = (!rgba[3]) ? '1' : rgba[3];
+    console.log(rgba);
 
-// shadeColor() to increasingly shade in squares until chosen colour
-function shadeColor() {
-    cMode = 'shade';
-    const squares = document.querySelectorAll('.square');
-    squares.forEach(e => {e.dataset.shading = 0});
-    draw();
-}
+    rgba = rgba.map(function (e) {
+        return parseFloat(e);
+    })
+    console.log('Int:',rgba);
 
-// colorChange() to reset each square's shading
-function colorChange() {
-    const squares = document.querySelectorAll('.square');
-    squares.forEach(e => {e.dataset.shading = 0});
-    chooseColor();
+
+    newRGBA = rgba.map(function (e) {
+        return parseFloat(e);
+    })
+
+
+    if (shadeStep <= 15) {
+        red = Math.round(rgba[0] - rgba[0] / 5);
+        green = Math.round(rgba[1] - rgba[1] / 5);
+        blue = Math.round(rgba[2] - rgba[2] / 5);
+        if (rgba[3] == 0) {
+            alpha = 0.2;
+        } else {
+            alpha = (rgba[3] + rgba[3] / 5).toFixed(2);
+        }
+    } else {
+        red = blue = green = 0;
+        alpha = 1;
+    }
+    newRGBA = [red, green, blue, alpha];
+    console.log('new:', newRGBA);
+    console.log('shade step:', shadeStep);
+
+    shadedColor = 'rgba('+ newRGBA.toString() + ')';
+    console.log(shadedColor);
+    return shadedColor;
 }
 
 // randomizeColor() for the rainbow option
