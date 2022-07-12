@@ -42,7 +42,8 @@ function makeGrid() {
             let square = document.createElement('div');
             square.classList.add('square');
             square.style.backgroundColor = 'rgba(255, 255, 255, 0)';
-            square.dataset.step = 0;
+            square.dataset.shade = 0;
+            square.dataset.light = 0;
             square_row.appendChild(square);
         }
     }
@@ -94,12 +95,17 @@ function draw() {
 function startOrEnd() {
     if (!start) {
         start = true;
+        colorCode = this.style.backgroundColor;
         if (cMode == 'shade') {
-            colorCode = this.style.backgroundColor;
-            shadeStep = parseInt(this.dataset.step);
+            shadeStep = parseInt(this.dataset.shade);
             color = findShade(colorCode, shadeStep);
             this.style.backgroundColor = color;
-            this.dataset.step = shadeStep + 1;
+            this.dataset.shade = shadeStep + 1;
+        } else if (cMode == 'lighten') {
+            lightenStep = parseInt(this.dataset.light);
+            color = findLighten(colorCode, lightenStep);
+            this.style.backgroundColor = color;
+            this.dataset.light = lightenStep + 1;
         } else {
             color = chooseColor();
             this.style.backgroundColor = color;
@@ -125,12 +131,17 @@ function chooseColor() {
 // fillColor() in the square by changing the background colour
 function fillColor() {
     if (start) {
+        colorCode = this.style.backgroundColor;
         if (cMode == 'shade') {
-            colorCode = this.style.backgroundColor;
-            shadeStep = parseInt(this.dataset.step);
+            shadeStep = parseInt(this.dataset.shade);
             color = findShade(colorCode, shadeStep);
             this.style.backgroundColor = color;
-            this.dataset.step = shadeStep + 1;
+            this.dataset.shade = shadeStep + 1;
+        } else if (cMode == 'lighten') {
+            lightenStep = parseInt(this.dataset.light);
+            color = findLighten(colorCode, lightenStep);
+            this.style.backgroundColor = color;
+            this.dataset.light = lightenStep + 1;
         } else {
             color = chooseColor();
             this.style.backgroundColor = color;
@@ -138,25 +149,14 @@ function fillColor() {
     }
 }
 
-
 // findShade() to find current colour and return darker colour
 function findShade(colorCode, shadeStep) {
     color = colorCode.substring(colorCode.indexOf('(')+1, colorCode.indexOf(')'));
     rgba = color.split(',');
     rgba[3] = (!rgba[3]) ? '1' : rgba[3];
-    console.log(rgba);
-
     rgba = rgba.map(function (e) {
         return parseFloat(e);
     })
-    console.log('Int:',rgba);
-
-
-    newRGBA = rgba.map(function (e) {
-        return parseFloat(e);
-    })
-
-
     if (shadeStep <= 15) {
         red = Math.round(rgba[0] - rgba[0] / 5);
         green = Math.round(rgba[1] - rgba[1] / 5);
@@ -171,14 +171,35 @@ function findShade(colorCode, shadeStep) {
         alpha = 1;
     }
     newRGBA = [red, green, blue, alpha];
-    console.log('new:', newRGBA);
-    console.log('shade step:', shadeStep);
-
     shadedColor = 'rgba('+ newRGBA.toString() + ')';
-    console.log(shadedColor);
     return shadedColor;
 }
 
+// findLighten() to find current colour and return lighter colour
+function findLighten(colorCode, lightStep) {
+    color = colorCode.substring(colorCode.indexOf('(')+1, colorCode.indexOf(')'));
+    rgba = color.split(',');
+    rgba[3] = (!rgba[3]) ? '1' : rgba[3];
+    rgba = rgba.map(function (e) {
+        return parseFloat(e);
+    })
+    if (lightStep <= 15) {
+        red = Math.round(rgba[0] + rgba[0] / 5);
+        green = Math.round(rgba[1] + rgba[1] / 5);
+        blue = Math.round(rgba[2] + rgba[2] / 5);
+        if (rgba[3] == 1) {
+            alpha = 0.9;
+        } else {
+            alpha = (rgba[3] - rgba[3] / 5).toFixed(2);
+        }
+    } else {
+        red = blue = green = 255;
+        alpha = 0;
+    }
+    newRGBA = [red, green, blue, alpha];
+    lighterColor = 'rgba('+ newRGBA.toString() + ')';
+    return lighterColor;
+}
 // randomizeColor() for the rainbow option
 function randomizeColor() {
     const r = Math.floor(Math.random() * 255);
