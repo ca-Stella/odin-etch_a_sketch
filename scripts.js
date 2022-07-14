@@ -23,6 +23,8 @@ makeGrid();
 
 // makeGrid() to create a grid of square divs 
 function makeGrid() {
+    cMode = 'basic';
+    resetButtons();
     if (round !== 0) {
         let sizeNum = checkSize();
         if (sizeNum === null) {
@@ -48,8 +50,20 @@ function makeGrid() {
         }
     }
     round++;
+    clear.classList.remove('pressed');
+    basic.classList.add('pressed');
     draw();
 }
+
+
+// resetButtons() to press and un-press
+function resetButtons() {
+    buttons.forEach(button => button.classList.remove('pressed'));
+    clear.classList.remove('pressed');
+    basic.classList.add('pressed');
+    colMode = 'basic';
+}
+
 
 // checkSize() to see if inputted size is appropriate
 function checkSize() {
@@ -75,6 +89,9 @@ function checkSize() {
 function pressButton() {
     start = false;
     cMode = this.getAttribute('id');
+    buttons.forEach(button => button.classList.remove('pressed'));
+    this.classList.add('pressed');
+
     draw();
 }
 

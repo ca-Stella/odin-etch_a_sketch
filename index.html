@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="./styles.css">
   <script src="scripts.js" defer></script>
+  <script src="https://kit.fontawesome.com/d9da4906ff.js" crossorigin="anonymous"></script>
   <title>Etch-a-Sketch</title>
 </head>
 <body>
@@ -15,15 +16,15 @@
     </header>
     <div class="bod">
       <div class="menu">
-        <button id="clear">Clear</button>
-        <button id="eraser">Eraser</button>
         <div class="color-pick">
           <input type="color" id="color-picker" value="#000000">
         </div>
-        <button class="setting" id="basic">Basic</button>
-        <button class="setting" id="random">Random</button>
-        <button class="setting" id="shade">Shade</button>
-        <button class="setting" id="lighten">Lighten</button>
+        <button class="setting" id="basic"><i class="fa-solid fa-paintbrush"></i></button>
+        <button class="setting" id="shade"><i class="fa-solid fa-pencil"></i></button>
+        <button class="setting" id="lighten"><i class="fa-solid fa-sun"></i></button>
+        <button class="setting" id="random"><i class="fa-solid fa-rainbow"></i></button>
+        <button class="setting" id="eraser"><i class="fa-solid fa-eraser"></i></button>
+        <button id="clear"><i class="fa-solid fa-arrows-rotate"></i></button>
       </div>
       <div class="center">
         <div id = "grid"></div>
