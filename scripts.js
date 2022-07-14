@@ -1,6 +1,10 @@
 const buttons = document.querySelectorAll('button');
 const grid = document.getElementById('grid');
 const clear = document.querySelector('#clear');
+const random = document.querySelector('#random');
+const shade = document.querySelector('#shade');
+const basic = document.querySelector('#basic');
+const eraser = document.querySelector('#eraser');
 const colPick = document.querySelector('#color-picker');
 
 buttons.forEach(button => button.addEventListener('click', pressButton));
@@ -91,7 +95,7 @@ function pressButton() {
     cMode = this.getAttribute('id');
     buttons.forEach(button => button.classList.remove('pressed'));
     this.classList.add('pressed');
-
+    basic.style.color = (!basic.classList.contains('pressed')) ? 'rgb(187,187,187)' : (colPick.value || 'black');
     draw();
 }
 
@@ -140,7 +144,12 @@ function chooseColor() {
         color = randomizeColor();
     } else {
         cMode = 'basic';
+        buttons.forEach(button => button.classList.remove('pressed'));
+        basic.classList.add('pressed');
         color = colPick.value || 'black';
+        if (basic.classList.contains('pressed')) {
+            basic.style.color = color;
+        }
     }
     return color;
 }

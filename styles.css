@@ -112,6 +112,12 @@ input {
 
 #shade.pressed, #shade:hover {
   color:rgb(112, 112, 112);
+  text-shadow: 0 0 2px rgb(255, 255, 255);
+}
+
+#lighten.pressed, #lighten:hover {
+  color:rgb(255, 255, 255);
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
 }
 
 #random.pressed, #random:hover {
@@ -124,6 +130,9 @@ input {
 #clear.pressed, #clear:hover {
   color:rgb(163, 60, 60)
 }
+
+
+
 
 /* Main grid region */
 .center {
