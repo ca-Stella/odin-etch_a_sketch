@@ -10,7 +10,6 @@ const colPick = document.querySelector('#color-picker');
 buttons.forEach(button => button.addEventListener('click', pressButton));
 
 clear.addEventListener('click', makeGrid);
-// shade.addEventListener('click', shadeSquares);
 colPick.addEventListener('click', function() {
     start = false; 
     cMode = 'basic';
@@ -96,6 +95,11 @@ function pressButton() {
     buttons.forEach(button => button.classList.remove('pressed'));
     this.classList.add('pressed');
     basic.style.color = (!basic.classList.contains('pressed')) ? 'rgb(187,187,187)' : (colPick.value || 'black');
+    if (cMode === 'eraser') {
+        grid.style.cursor = "url('./img/eraser.png') 15 15, auto";
+    } else {
+        grid.style.cursor = "auto";
+    }
     draw();
 }
 
